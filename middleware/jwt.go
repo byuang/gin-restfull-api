@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func DeserializeUser(userRepository repository.UsersRepository) gin.HandlerFunc {
+func JwtMiddleware(userRepository repository.UsersRepository) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var token string
 		authorizationHeader := ctx.Request.Header.Get("Authorization")
@@ -24,7 +24,7 @@ func DeserializeUser(userRepository repository.UsersRepository) gin.HandlerFunc 
 		}
 
 		if token == "" {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "You are not logged in"})
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "Unauthorized"})
 			return
 		}
 

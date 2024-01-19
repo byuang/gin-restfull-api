@@ -17,14 +17,12 @@ func NewUsersRepositoryImpl(Db *gorm.DB) UsersRepository {
 	return &UsersRepositoryImpl{Db: Db}
 }
 
-// Delete implements UsersRepository
 func (u *UsersRepositoryImpl) Delete(usersId int) {
 	var users model.Users
 	result := u.Db.Where("id = ?", usersId).Delete(&users)
 	helper.ErrorPanic(result.Error)
 }
 
-// FindAll implements UsersRepository
 func (u *UsersRepositoryImpl) FindAll() []model.Users {
 	var users []model.Users
 	results := u.Db.Find(&users)
@@ -32,7 +30,6 @@ func (u *UsersRepositoryImpl) FindAll() []model.Users {
 	return users
 }
 
-// FindById implements UsersRepository
 func (u *UsersRepositoryImpl) FindById(usersId int) (model.Users, error) {
 	var users model.Users
 	result := u.Db.Find(&users, usersId)
@@ -43,13 +40,11 @@ func (u *UsersRepositoryImpl) FindById(usersId int) (model.Users, error) {
 	}
 }
 
-// Save implements UsersRepository
 func (u *UsersRepositoryImpl) Save(users model.Users) {
 	result := u.Db.Create(&users)
 	helper.ErrorPanic(result.Error)
 }
 
-// Update implements UsersRepository
 func (u *UsersRepositoryImpl) Update(users model.Users) {
 	var updateUsers = request.UpdateUsersRequest{
 		Id:       users.Id,
@@ -61,13 +56,51 @@ func (u *UsersRepositoryImpl) Update(users model.Users) {
 	helper.ErrorPanic(result.Error)
 }
 
-// FindByUsername implements UsersRepository
 func (u *UsersRepositoryImpl) FindByUsername(username string) (model.Users, error) {
 	var users model.Users
 	result := u.Db.First(&users, "username = ?", username)
 
 	if result.Error != nil {
 		return users, errors.New("invalid username or Password")
+	}
+	return users, nil
+}
+
+func (u *UsersRepositoryImpl) FindByEmail(email string) (model.Users, error) {
+	var users model.Users
+	result := u.Db.First(&users, "email = ?", email)
+
+	if result.RowsAffected == 0 {
+		return users, errors.New("email not found")
+	}
+
+	if result.Error != nil {
+		return users, result.Error
+	}
+	return users, nil
+}
+
+func (u *UsersRepositoryImpl) UpdateOtp(users model.Users) {
+	updateFields := map[string]interface{}{
+		"Password" : users.Password,
+		"PasswordResetToken": users.PasswordResetToken,
+		"PasswordResetAt":    users.PasswordResetAt,
+	}
+
+	result := u.Db.Model(&users).Updates(updateFields)
+	helper.ErrorPanic(result.Error)
+}
+
+func (u *UsersRepositoryImpl) FindByOtp(Otp int) (model.Users, error) {
+	var users model.Users
+	result := u.Db.First(&users, "password_reset_token = ?", Otp)
+
+	if result.RowsAffected == 0 {
+		return users, errors.New("otp not found")
+	}
+
+	if result.Error != nil {
+		return users, result.Error
 	}
 	return users, nil
 }

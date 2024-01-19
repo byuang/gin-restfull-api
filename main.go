@@ -34,13 +34,13 @@ func main() {
 	tagsRepository := repository.NewTagsREpositoryImpl(db)
 
 	//Init Service
-	authenticationService := service.NewAuthenticationServiceImpl(userRepository, validate)
-	tagsService := service.NewTagsServiceImpl(tagsRepository, validate)
+	authenticationService := service.NewAuthenticationServiceImpl(userRepository)
+	tagsService := service.NewTagsServiceImpl(tagsRepository)
 
 	//Init controller
-	authenticationController := controller.NewAuthenticationController(authenticationService)
+	authenticationController := controller.NewAuthenticationController(authenticationService, validate)
 	usersController := controller.NewUsersController(userRepository)
-	tagsController := controller.NewTagsController(tagsService)
+	tagsController := controller.NewTagsController(tagsService, validate)
 
 	routes := router.NewRouter(userRepository, authenticationController, usersController, tagsController)
 

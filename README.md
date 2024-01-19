@@ -1,5 +1,5 @@
 # Description
-A simple API Tags with CRUD and JWT auth
+A Boilerplate For New Project By Pyuang
 
 # Features
 This API developed with Go, Gin-Gonic, Gorm, JWT, Postgresql, Docker
@@ -9,26 +9,17 @@ This API developed with Go, Gin-Gonic, Gorm, JWT, Postgresql, Docker
       
 # Getting Start:
 Before you running the program, make sure you've run this command:
-- `go get -u all`
-- `.env with config db`
-- `docker compose up -d`
+```bash
+- go get -u all
+- app.env with config db
+- docker compose up -d
+```
 
 ### Run the program
 `go run main.go`
+ ```bash
+- go run main.go
+```
 
-The program will run on http://localhost:8888
-
-
-### API Route List
-| Method | URL                                        | Description           | Authorization           |
-| ------ | ----------------------------------------   | --------------------- | ------------------------|
-| POST   | localhost:8888/api/authentication/register | Register              |                         |
-| POST   | localhost:8888/api/authentication/login    | Login                 |                         |
-| GET    | localhost:8888/api/tags                    | Get All Tags          | Add Authorization token |
-| POST   | localhost:8888/api/tags                    | Create Tags           | Add Authorization token |
-| POST   | localhost:8888/api/tags/{id}               | Update Tags           | Add Authorization token |
-| GET    | localhost:8888/api/tags/{id}               | Get Tags Details      | Add Authorization token |
-| DELETE | localhost:8888/api/tags/{id}               | Delete Tags           | Add Authorization token |
-
- 
+The program will run on http://localhost:8888 
 <!-- </> with 💛 by readMD (https://readmd.itsvg.in) -->

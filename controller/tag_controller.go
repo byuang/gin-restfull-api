@@ -9,16 +9,19 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog/log"
 )
 
 type TagsController struct {
 	tagsService service.TagsService
+	Validate       *validator.Validate
 }
 
-func NewTagsController(service service.TagsService) *TagsController {
+func NewTagsController(service service.TagsService, validate *validator.Validate) *TagsController {
 	return &TagsController{
 		tagsService: service,
+		Validate:       validate,
 	}
 }
 
@@ -28,10 +31,19 @@ func (controller *TagsController) Create(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&createTagsRequest)
 	helper.ErrorPanic(err)
 
+	if err := controller.Validate.Struct(createTagsRequest); err != nil {
+		if helper.ValidationError(err, ctx, createTagsRequest) {
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+	
 	controller.tagsService.Create(createTagsRequest)
 	webResponse := response.Response{
 		Code:   http.StatusOK,
 		Status: "Ok",
+		Message: "Created successfully",
 		Data:   nil,
 	}
 	ctx.Header("Content-Type", "application/json")
